@@ -1,0 +1,12 @@
+<configuration>
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>logs/discordbot.log</file> <!-- 로그 파일의 경로와 이름 설정 -->
+        <encoder>
+            <pattern>%d [%t] %-5p %logger{36} - %m%n</pattern> <!-- 로그 형식 설정 -->
+        </encoder>
+    </appender>
+
+    <root level="info"> <!-- 로그 레벨 설정 -->
+        <appender-ref ref="FILE" />
+    </root>
+</configuration>

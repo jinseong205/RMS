@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Reservation</title>
+</head>
+<body>
+    <h1>Reservation Data</h1>
+    <div id="reservationData"></div>
+
+    <script>
+        const socket = new WebSocket("ws://localhost:8080/ws"); // WebSocket 연결
+        const reservationDataDiv = document.getElementById("reservationData");
+
+        socket.onmessage = function(event) {
+            const newData = event.data;
+            const newParagraph = document.createElement("p");
+            newParagraph.textContent = newData;
+
+            // 새로운 데이터를 이전 데이터 위로 추가
+            reservationDataDiv.insertBefore(newParagraph, reservationDataDiv.firstChild);
+        };
+    </script>
+</body>
+</html>

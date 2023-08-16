@@ -1,0 +1,8 @@
+kafka-data
+zookeeper-logs
+zookeeper-data
+discordbot/logs/*
+discordbot/src/main/resources/config.properties
+discordbot/target/discordbot-0.0.1-SNAPSHOT.jar
+demo/target/demo-0.0.1-SNAPSHOT.jar
+*.properties
