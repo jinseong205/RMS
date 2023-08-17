@@ -5,21 +5,58 @@
     <title>Reservation</title>
 </head>
 <body>
+	<nav>
+		<ul>
+			<li><a href="/">실시간 예약 요청</a>
+			<li><a href="/manageReservation">실시간 예약 관리</a>
+		</ul>
+	</nav>
     <h1>Reservation Data</h1>
     <div id="reservationData"></div>
-
+	<table id="reservation">
+	
+	</table>
     <script>
         const socket = new WebSocket("ws://localhost:8080/ws"); // WebSocket 연결
         const reservationDataDiv = document.getElementById("reservationData");
 
         socket.onmessage = function(event) {
-            const newData = event.data;
-            const newParagraph = document.createElement("p");
-            newParagraph.textContent = newData;
+            const newData = event.data; // 데이터 형태 그대로 사용
 
-            // 새로운 데이터를 이전 데이터 위로 추가
-            reservationDataDiv.insertBefore(newParagraph, reservationDataDiv.firstChild);
+            const table = document.createElement("table");
+            const row = table.insertRow();
+
+            // 데이터를 쉼표 기준으로 분리하여 셀에 넣기
+            const dataItems = newData.split(", ");
+            dataItems.forEach(item => {
+                const [label, value] = item.split(": ");
+                const cell = row.insertCell();
+                cell.textContent = `${label}: ${value}`;
+            });
+
+            // 승인 및 거절 버튼 추가
+            const actionsCell = row.insertCell(4);
+            const approveButton = document.createElement("button");
+            const rejectButton = document.createElement("button");
+
+            approveButton.textContent = "Approve";
+            rejectButton.textContent = "Reject";
+
+            // 승인 및 거절 버튼 클릭 시 처리 로직 추가
+            approveButton.addEventListener("click", function() {
+                // REST API 호출 및 상태 변경 로직 추가
+            });
+
+            rejectButton.addEventListener("click", function() {
+                // REST API 호출 및 상태 변경 로직 추가
+            });
+
+            actionsCell.appendChild(approveButton);
+            actionsCell.appendChild(rejectButton);
+            // 생성한 테이블을 화면에 추가
+            reservationDataDiv.appendChild(table);
         };
+
     </script>
 </body>
 </html>

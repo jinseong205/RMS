@@ -79,26 +79,27 @@ public class Main extends ListenerAdapter {
 			log.debug("=== 예약 ===");
 			String[] commandArgs = content.split(" ");
 			
-			if (commandArgs.length == 5) {
+			if (commandArgs.length == 6) {
 				String name = commandArgs[1];
 				String date = commandArgs[2];
 				String time = commandArgs[3];
 				String count = commandArgs[4];
-				String response = "예약 전송" + "-> 이름: " + name + " / 날짜: " + date + " / 시간: " + time + " / 인원: " + count;
+				String number = commandArgs[5];
+				String response = "예약 전송" + "-> 이름: " + name + " / 날짜: " + date + " / 시간: " + time + " / 인원: " + count + "/ 연락처:" + number;
 				channel.sendMessage(response).queue();
-				sendReservationToKafka(name, date, time, count);
+				sendReservationToKafka(name, date, time, count, number);
 			} else {
-				channel.sendMessage("유효하지 않은 명령어 형태입니다. ---> !예약 이름 날짜 시간 인원").queue();
+				channel.sendMessage("유효하지 않은 명령어 형태입니다. ---> !예약 이름 날짜 시간 인원 연락처").queue();
 			}
 
 		} else if (content.equals("!도움말")) { // [!도움말] 명령어 처리
 			log.debug("=== 도움말 ===");
-			channel.sendMessage("[명령어] \n" + "예약 생성 ---> !예약 이름 날짜 시간 인원 \n" + "\t ex) !예약 정진성 2023/08/09 18:00 4")
+			channel.sendMessage("[명령어] \n" + "예약 생성 ---> !예약 이름 날짜 시간 인원 연락처 \n" + "\t ex) !예약 정진성 2023/08/09 18:00 4 01012345678")
 					.queue();
 		}
 	}
 
-	private void sendReservationToKafka(String name, String date, String time, String count) {
+	private void sendReservationToKafka(String name, String date, String time, String count, String number) {
 
 		Properties properties = new Properties();
 		properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092"); // Kafka 브로커 주소
@@ -109,7 +110,7 @@ public class Main extends ListenerAdapter {
 
 		String topic = "reservation-topic"; // 예약 정보를 보낼 Kafka 토픽 이름
 
-		String message = "Name: " + name + ", Date: " + date + ", Time: " + time + ", Count: " + count;
+		String message = "Name: " + name + ", Date: " + date + ", Time: " + time + ", Count: " + count + ",Number : " + number;
 		ProducerRecord<String, String> record = new ProducerRecord<>(topic, message);
 
 		producer.send(record, (metadata, exception) -> {
