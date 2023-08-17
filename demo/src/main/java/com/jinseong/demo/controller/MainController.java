@@ -12,4 +12,9 @@ public class MainController {
     public String index(Model model) {
         return "index"; // index.html 뷰 반환
     }
+
+    @GetMapping("/manageReservation")
+    public String manageReservation(Model model) {
+        return "manageReservation"; // index.html 뷰 반환
+    }
 }

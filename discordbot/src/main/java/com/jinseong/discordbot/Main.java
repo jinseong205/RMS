@@ -45,6 +45,7 @@ public class Main extends ListenerAdapter {
 		}
 		
 		String token = properties.getProperty("bot.token");
+		
 		JDABuilder.createDefault(token).enableIntents(GatewayIntent.MESSAGE_CONTENT) // Add this line
 				.addEventListeners(new Main()).build();
 	}
@@ -69,14 +70,13 @@ public class Main extends ListenerAdapter {
 	public void onMessageReceived(MessageReceivedEvent event) {
 		if (event.getAuthor().isBot())
 			return;
-
 		MessageChannel channel = event.getChannel();
 		User user = event.getAuthor();
 		String content = event.getMessage().getContentRaw();
 
 		if (content.startsWith("!예약")) { // [!예약] 명령어 처리
 
-			log.debug("=== 예약 ===");
+			log.info("=== 예약 ===");
 			String[] commandArgs = content.split(" ");
 			
 			if (commandArgs.length == 6) {
@@ -115,9 +115,9 @@ public class Main extends ListenerAdapter {
 
 		producer.send(record, (metadata, exception) -> {
 			if (exception == null) {
-				log.debug("메세지가 전송 성공 - " + topic);
+				log.info("메세지가 전송 성공 - " + topic);
 			} else {
-				log.debug("메세지가 전송 실패 -" + topic + ": " + exception.getMessage());
+				log.info("메세지가 전송 실패 -" + topic + ": " + exception.getMessage());
 			}
 		});
 

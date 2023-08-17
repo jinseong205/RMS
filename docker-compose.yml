@@ -22,27 +22,25 @@ services:
       - ./kafka-data:/var/lib/kafka/data
   db:
     build: 
-      context: ./docker-test-db
+      context: ./db
       dockerfile: Dockerfile
     ports:
       - 3306:3306
     volumes:
-      - ./docker-test-db/store:/var/lib/mysql
-    networks:
-      - network      
-  discordbot:                                   
-    build:
-      context: ./discordbot
-      dockerfile: Dockerfile
-    depends_on:
-      - kafka
-  demo:
-    build:
-      context: ./demo
-      dockerfile: Dockerfile
-    depends_on:
-      - kafka
-      - db
+      - ./db/store:/var/lib/mysql
+  # discordbot:                                   
+  #   build:
+  #     context: ./discordbot
+  #     dockerfile: Dockerfile
+  #   depends_on:
+  #     - kafka
+  # demo:
+  #   build:
+  #     context: ./demo
+  #     dockerfile: Dockerfile
+  #   depends_on:
+  #     - kafka
+  #     - db
 volumes:
   kafka-data:
     driver: local
