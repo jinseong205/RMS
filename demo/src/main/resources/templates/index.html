@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Reservation</title>
+    <title>RMS</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         .container {
@@ -27,7 +27,7 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Reservation System</a>
+        <a class="navbar-brand" href="/">RMS</a>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
@@ -81,26 +81,62 @@
             const rejectCell = row.insertCell();
 
             const approveButton = document.createElement("button");
-            approveButton.name = id;
             approveButton.className = "btn btn-success";
             approveButton.textContent = "승인";
 
             const rejectButton = document.createElement("button");
-            rejectButton.name = id;
             rejectButton.className = "btn btn-danger ml-2";
             rejectButton.textContent = "거절";
 
             approveButton.addEventListener("click", (e) => {
-                console.log(`승인 버튼 클릭 - 예약번호: ${e.target.name}`);
+                console.log(`승인 버튼 클릭 - 예약번호: ${id}`);
+                approveReservation(id, row);
             });
 
-            rejectButton.addEventListener("click", (e) => {
-                console.log(`거절 버튼 클릭 - 예약번호: ${e.target.name}`);
+            rejectButton.addEventListener("click", () => {
+                console.log(`거절 버튼 클릭 - 예약번호: ${id}`);
+                rejectReservation(id, row);
             });
 
             approveCell.appendChild(approveButton);
             rejectCell.appendChild(rejectButton);
         };
+        
+        function approveReservation(id, row) {
+            fetch(`http://localhost:8080/api/approveRes/${id}`, {
+                method: "PATCH"
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert("예약이 승인되었습니다.");
+                    row.remove(); // 해당 row 삭제
+                } else {
+                    alert("예약 승인 실패");
+                }
+            })
+            .catch(error => {
+                console.error("Error approving reservation:", error);
+            });
+        }
+
+        function rejectReservation(id, row) {
+            fetch(`http://localhost:8080/api/rejectRes/${id}`, {
+                method: "PATCH"
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert("예약이 거절되었습니다.");
+                    row.remove(); // 해당 row 삭제
+                } else {
+                    alert("예약 거절 실패");
+                }
+            })
+            .catch(error => {
+                console.error("Error rejecting reservation:", error);
+            });
+        }        
+        
+        
     </script>
 </body>
 </html>
