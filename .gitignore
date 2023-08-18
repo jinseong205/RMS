@@ -7,3 +7,4 @@ discordbot/target/discordbot-0.0.1-SNAPSHOT.jar
 demo/target/demo-0.0.1-SNAPSHOT.jar
 db/store
 *.properties
+demo/logging/demo.log
