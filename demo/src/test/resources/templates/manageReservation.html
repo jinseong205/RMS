@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>RMS</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .container {
+            margin-top: 50px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .btn {
+            min-width: 60px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/">RMS</a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">실시간 예약 요청</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/manageReservation">예약 관리</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <h1>예약 관리</h1>
+        <table class="table mt-4">
+            <thead>
+                <tr>
+                    <th>예약번호</th>
+                    <th>이름</th>
+                    <th>예약날짜</th>
+                    <th>예약시간</th>
+                    <th>인원</th>
+                    <th>연락처</th>
+                    <th>현재상태</th>
+                    <th>승인</th>
+                    <th>거절</th>
+                </tr>
+            </thead>
+            <tbody id="reservation">
+            <th:block th:each="reservation : ${reservations.content}">
+				<tr>
+					<td th:text="${reservation.id}"></td>
+					<td th:text="${reservation.name}"></td>
+					<td th:text="${reservation.date}"></td>
+					<td th:text="${reservation.time}"></td>
+					<td th:text="${reservation.count}"></td>
+					<td th:text="${reservation.number}"></td>
+					<td th:id="'status-' + ${reservation.id}">						
+						<span th:if="${reservation.status == 'WAIT' || reservation.status == null }" class="ml-2 text-warning">대기</span>
+						<span th:if="${reservation.status == 'APPROVE'}" class="ml-2 text-success">승인</span>
+						<span th:if="${reservation.status == 'REJECT'}" class="ml-2 text-danger">거절</span>
+					</td>
+
+					
+					<td>
+						<button class="btn btn-success" th:onclick="'javascript:approveReservation(' + ${reservation.id} + ')'"
+						       th:text="'승인'"></button>
+
+					</td>
+					<td>
+					<button class="btn btn-danger ml-2" th:onclick="'javascript:rejectReservation(' + ${reservation.id} + ')'"
+						       th:text="'거절'"></button>
+						
+					</td>
+				</tr>
+			</th:block>
+            </tbody>
+        </table>
+		<div class="d-flex justify-content-center mt-4">
+		    <ul class="pagination">
+		        <li th:class="${reservations.first ? 'disabled' : ''}" class="page-item">
+		            <a th:href="@{/manageReservation(page=0)}" class="page-link">처음</a>
+		        </li>
+		        <li th:class="${reservations.first ? 'disabled' : ''}" class="page-item">
+		            <a th:href="@{/manageReservation(page=${reservations.number - 1})}" class="page-link" aria-label="Previous">
+		                <span aria-hidden="true">&laquo;</span>
+		            </a>
+		        </li>
+		        <li th:class="${page == i ? 'active' : ''}" th:each="i : ${#numbers.sequence(0, reservations.totalPages - 1)}" class="page-item">
+		            <a th:href="@{/manageReservation(page=${i})}" class="page-link" th:text="${i + 1}"></a>
+		        </li>
+		        <li th:class="${reservations.last ? 'disabled' : ''}" class="page-item">
+		            <a th:href="@{/manageReservation(page=${reservations.number + 1})}" class="page-link" aria-label="Next">
+		                <span aria-hidden="true">&raquo;</span>
+		            </a>
+		        </li>
+		        <li th:class="${reservations.last ? 'disabled' : ''}" class="page-item">
+		            <a th:href="@{/manageReservation(page=${reservations.totalPages - 1})}" class="page-link">끝</a>
+		        </li>
+		    </ul>
+		</div>
+
+	<!-- 승인/거절 처리를 위한 스크립트 -->
+	<script>
+		function approveReservation(id) {
+			fetch(`http://localhost:8080/api/approveRes/${id}`, {
+				method: "PATCH"
+			})
+			.then(response => {
+				if (response.ok) {
+					alert("예약이 승인되었습니다.");
+	                const statusSpan = document.getElementById(`status-${id}`).children[0];
+	                statusSpan.className="ml-2 text-success"
+	                statusSpan.textContent = '승인';
+				} else {
+					alert("예약 승인 실패");
+				}
+			})
+			.catch(error => {
+				console.log("Error approving reservation:", error);
+			});
+		}
+
+		function rejectReservation(id) {
+			fetch(`http://localhost:8080/api/rejectRes/${id}`, {
+				method: "PATCH"
+			})
+			.then(response => {
+				if (response.ok) {
+					alert("예약이 거절되었습니다.");
+	                const statusSpan = document.getElementById(`status-${id}`).children[0];
+	                statusSpan.className="ml-2 text-danger"
+	                statusSpan.textContent = '거절';
+				} else {
+					alert("예약 거절 실패");
+				}
+			})
+			.catch(error => {
+				console.log("Error rejecting reservation:", error);
+			});
+		}
+		
+
+	</script>
+</body>
+</html>
